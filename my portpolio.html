@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sai Kumar — Backend Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #10151c;
+    --bg-raised: #161d26;
+    --line: #29323d;
+    --text: #e7ebf0;
+    --text-dim: #8b95a3;
+    --text-faint: #5b6472;
+    --amber: #e8a33d;
+    --green: #52c98a;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{ color:inherit; }
+
+  ::selection{ background:var(--amber); color:#10151c; }
+
+  :focus-visible{
+    outline:2px solid var(--amber);
+    outline-offset:3px;
+  }
+
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    background:rgba(16,21,28,0.92);
+    backdrop-filter:blur(6px);
+    z-index:10;
+  }
+  .topbar-inner{
+    max-width:760px;
+    margin:0 auto;
+    padding:16px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-family:var(--mono);
+    font-size:13px;
+  }
+  .topbar .host{ color:var(--text-dim); }
+  .topbar .status{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:var(--green);
+  }
+  .dot{
+    width:7px; height:7px; border-radius:50%;
+    background:var(--green);
+    box-shadow:0 0 0 3px rgba(82,201,138,0.15);
+  }
+
+  /* ---------- hero / request-response ---------- */
+  .hero{ padding:64px 0 40px; }
+  .req-line{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--text-dim);
+    margin-bottom:14px;
+  }
+  .req-line .verb{ color:var(--green); font-weight:600; }
+  .req-line .path{ color:var(--text); }
+
+  .console{
+    border:1px solid var(--line);
+    background:var(--bg-raised);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .console-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:9px 14px;
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+  }
+  .console-body{
+    padding:20px 22px 24px;
+    font-family:var(--mono);
+    font-size:13.5px;
+    white-space:pre-wrap;
+  }
+  .k{ color:#7fb4d9; }
+  .s{ color:var(--amber); }
+  .punc{ color:var(--text-faint); }
+  .caret{
+    display:inline-block;
+    width:7px; height:15px;
+    background:var(--amber);
+    margin-left:2px;
+    vertical-align:-2px;
+    animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .headline{
+    font-size:clamp(28px, 5vw, 40px);
+    line-height:1.15;
+    margin:28px 0 8px;
+    font-weight:700;
+    letter-spacing:-0.01em;
+  }
+  .sub{
+    color:var(--text-dim);
+    font-size:16px;
+    max-width:52ch;
+    margin:0 0 26px;
+  }
+  .hero-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    text-decoration:none;
+    padding:10px 16px;
+    border-radius:5px;
+    border:1px solid var(--line);
+    color:var(--text);
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{ border-color:var(--text-faint); background:#1b232d; }
+  .btn.primary{
+    background:var(--amber);
+    color:#181205;
+    border-color:var(--amber);
+    font-weight:600;
+  }
+  .btn.primary:hover{ background:#f0ae4a; }
+
+  /* ---------- section: route blocks ---------- */
+  .routes{ padding:20px 0 30px; }
+  .route{
+    border-top:1px solid var(--line);
+    padding:34px 0;
+  }
+  .route:last-child{ border-bottom:1px solid var(--line); }
+  .route-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:16px;
+  }
+  .verb-badge{
+    font-family:var(--mono);
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--green);
+    border:1px solid rgba(82,201,138,0.35);
+    background:rgba(82,201,138,0.08);
+    padding:3px 7px;
+    border-radius:4px;
+    letter-spacing:.02em;
+  }
+  .route-path{
+    font-family:var(--mono);
+    font-size:15px;
+    color:var(--text);
+  }
+  .route-path .seg-dim{ color:var(--text-faint); }
+  .route-title{
+    font-size:22px;
+    font-weight:700;
+    margin:2px 0 6px;
+  }
+  .route-meta{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+    margin-bottom:14px;
+  }
+  .route-body p{
+    color:var(--text-dim);
+    margin:0 0 14px;
+    max-width:62ch;
+  }
+  .route-body ul{
+    margin:0 0 14px;
+    padding-left:20px;
+    color:var(--text-dim);
+  }
+  .route-body li{ margin-bottom:6px; }
+  .tag-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:16px;
+  }
+  .tag{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--text-dim);
+    border:1px solid var(--line);
+    padding:4px 9px;
+    border-radius:4px;
+  }
+  .route-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-top:16px;
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--amber);
+    text-decoration:none;
+    border-bottom:1px solid rgba(232,163,61,0.35);
+    padding-bottom:1px;
+  }
+  .route-link:hover{ border-bottom-color:var(--amber); }
+
+  /* ---------- skills grid ---------- */
+  .skill-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:14px 24px;
+    margin-top:6px;
+  }
+  .skill-group dt{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--text-faint);
+    margin-bottom:6px;
+  }
+  .skill-group dd{
+    margin:0;
+    color:var(--text);
+    font-size:14.5px;
+  }
+
+  /* ---------- education / cert list ---------- */
+  .edu-row{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    padding:13px 0;
+    border-top:1px solid var(--line);
+  }
+  .edu-row:first-child{ border-top:none; }
+  .edu-name{ font-weight:600; font-size:14.5px; }
+  .edu-org{ color:var(--text-dim); font-size:13.5px; margin-top:2px; }
+  .edu-score{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--text-dim);
+    white-space:nowrap;
+    text-align:right;
+  }
+
+  /* ---------- footer / contact ---------- */
+  .contact{
+    padding:44px 0 60px;
+  }
+  .contact-card{
+    border:1px solid var(--line);
+    background:var(--bg-raised);
+    border-radius:6px;
+    padding:30px 28px;
+  }
+  .contact-card h2{
+    margin:0 0 8px;
+    font-size:22px;
+  }
+  .contact-card p{
+    color:var(--text-dim);
+    margin:0 0 22px;
+    max-width:50ch;
+  }
+  .contact-links{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  footer{
+    border-top:1px solid var(--line);
+    padding:20px 0 40px;
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--text-faint);
+  }
+
+  @media (max-width:560px){
+    .skill-grid{ grid-template-columns:1fr; }
+    .edu-row{ flex-direction:column; gap:4px; }
+    .edu-score{ text-align:left; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .caret{ animation:none; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <span class="host">saikumar.dev</span>
+    <span class="status"><span class="dot"></span>open to work</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="req-line"><span class="verb">GET</span> <span class="path">/sai-kumar</span></div>
+
+    <div class="console">
+      <div class="console-head">
+        <span>response · 200 OK</span>
+        <span>application/json</span>
+      </div>
+      <div class="console-body" id="jsonOut"></div>
+    </div>
+
+    <h1 class="headline">Backend developer who ships full features, not just endpoints.</h1>
+    <p class="sub">MCA graduate building web applications with Python, Django and MySQL — from database schema to the screen someone actually taps.</p>
+
+    <div class="hero-actions">
+      <a class="btn primary" href="mailto:nsaikumar9966@gmail.com">Email me</a>
+      <a class="btn" href="https://github.com/saikumar939851" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn" href="https://linkedin.com/in/narahari-sai-kumar-3a96a7376" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </section>
+
+  <section class="routes">
+
+    <div class="route" id="skills">
+      <div class="route-head">
+        <span class="verb-badge">GET</span>
+        <span class="route-path">/skills</span>
+      </div>
+      <h2 class="route-title">What I build with</h2>
+      <div class="route-meta">stack · concepts · tools</div>
+      <dl class="skill-grid">
+        <div class="skill-group">
+          <dt>Languages</dt>
+          <dd>Python, HTML, CSS</dd>
+        </div>
+        <div class="skill-group">
+          <dt>Frameworks</dt>
+          <dd>Django, Bootstrap 5</dd>
+        </div>
+        <div class="skill-group">
+          <dt>Database</dt>
+          <dd>MySQL</dd>
+        </div>
+        <div class="skill-group">
+          <dt>Tools &amp; platforms</dt>
+          <dd>Git, VS Code, Postman, Claude Code</dd>
+        </div>
+        <div class="skill-group">
+          <dt>Concepts</dt>
+          <dd>Session-based auth, role-based access control, REST-style app design</dd>
+        </div>
+        <div class="skill-group">
+          <dt>Working style</dt>
+          <dd>Quick learner — picks up new tools and technologies fast</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="route" id="project-delivery">
+      <div class="route-head">
+        <span class="verb-badge">GET</span>
+        <span class="route-path">/projects/<span class="seg-dim">food-delivery</span></span>
+      </div>
+      <h2 class="route-title">Online Food Delivery Application</h2>
+      <div class="route-meta">capstone project · 2026</div>
+      <div class="route-body">
+        <p>A secure, role-based web platform for food ordering, built end to end — from database design to the order tracking screen each type of user sees.</p>
+        <ul>
+          <li>Full-stack build with Python Django, MySQL and Bootstrap 5, supporting three distinct roles: Admin, Restaurant and Customer.</li>
+          <li>Session-based authentication and role-based access control to manage permissions across user types.</li>
+          <li>Relational database schema covering menus, orders, restaurants and user accounts.</li>
+          <li>Order placement, tracking and management workflows for all three roles, using Django views and templates.</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag">Django</span>
+          <span class="tag">MySQL</span>
+          <span class="tag">Bootstrap 5</span>
+          <span class="tag">Auth &amp; RBAC</span>
+        </div>
+        <a class="route-link" href="https://github.com/saikumar939851/secure-web-based-food-delivery-management-system" target="_blank" rel="noopener">View the code on GitHub →</a>
+      </div>
+    </div>
+
+    <div class="route" id="project-agent">
+      <div class="route-head">
+        <span class="verb-badge">GET</span>
+        <span class="route-path">/projects/<span class="seg-dim">ai-ordering-agent</span></span>
+      </div>
+      <h2 class="route-title">AI Food Ordering Agent</h2>
+      <div class="route-meta">n8n · Google Gemini API · 2026</div>
+      <div class="route-body">
+        <p>A conversational ordering bot that takes an order the way a person would ask for one — over chat.</p>
+        <ul>
+          <li>Built the workflow in n8n, using Google Gemini AI for conversation and Google Sheets as the backend store.</li>
+          <li>Workflow handles order collection, delivery address capture and payment flow through a chat-based interface.</li>
+        </ul>
+        <div class="tag-row">
+          <span class="tag">n8n</span>
+          <span class="tag">Gemini API</span>
+          <span class="tag">Google Sheets</span>
+          <span class="tag">Workflow automation</span>
+        </div>
+        <a class="route-link" href="https://github.com/saikumar939851/-n8n-ai-food-ordering-agent" target="_blank" rel="noopener">View the workflow on GitHub →</a>
+      </div>
+    </div>
+
+    <div class="route" id="education">
+      <div class="route-head">
+        <span class="verb-badge">GET</span>
+        <span class="route-path">/education</span>
+      </div>
+      <h2 class="route-title">Education &amp; certification</h2>
+      <div class="route-meta"></div>
+      <div>
+        <div class="edu-row">
+          <div>
+            <div class="edu-name">Master of Computer Applications (MCA)</div>
+            <div class="edu-org">2024 – June 2026 · capstone in secure full-stack web development</div>
+          </div>
+          <div class="edu-score">CGPA 8.4</div>
+        </div>
+        <div class="edu-row">
+          <div>
+            <div class="edu-name">B.Sc. (MPC)</div>
+            <div class="edu-org">Osmania College, Kurnool</div>
+          </div>
+          <div class="edu-score">CGPA 7.44</div>
+        </div>
+        <div class="edu-row">
+          <div>
+            <div class="edu-name">Intermediate</div>
+            <div class="edu-org">Sri Gayatri Junior College</div>
+          </div>
+          <div class="edu-score">77.9%</div>
+        </div>
+        <div class="edu-row">
+          <div>
+            <div class="edu-name">SSC</div>
+            <div class="edu-org">ZP High School, Vanala</div>
+          </div>
+          <div class="edu-score">GPA 9.3</div>
+        </div>
+        <div class="edu-row">
+          <div>
+            <div class="edu-name">Office Automation (MS-Office)</div>
+            <div class="edu-org">ICT Institute of Computer Technology, Kurnool · 2024</div>
+          </div>
+          <div class="edu-score">Certificate</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="contact-card">
+      <h2>Let's build something.</h2>
+      <p>Open to entry-level Python/Django developer roles — remote or Hyderabad-based, and open to relocating to Bengaluru.</p>
+      <div class="contact-links">
+        <a class="btn primary" href="mailto:nsaikumar9966@gmail.com">nsaikumar9966@gmail.com</a>
+        <a class="btn" href="tel:+919398515619">+91 93985 15619</a>
+        <a class="btn" href="https://github.com/saikumar939851" target="_blank" rel="noopener">github.com/saikumar939851</a>
+        <a class="btn" href="https://linkedin.com/in/narahari-sai-kumar-3a96a7376" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>Kurnool, Andhra Pradesh, India — open to relocate to Hyderabad / Bengaluru</footer>
+
+</div>
+
+<script>
+  var jsonLines = [
+    { pre: '{' },
+    { key: 'name', val: '"Narahari Sai Kumar"' },
+    { key: 'role', val: '"Full-Stack Developer — Python & Django"' },
+    { key: 'location', val: '"Kurnool, Andhra Pradesh, India"' },
+    { key: 'openTo', val: '["Remote", "Hyderabad", "Bengaluru"]' },
+    { key: 'status', val: '"available"' },
+    { pre: '}' }
+  ];
+
+  function renderJSON(){
+    var out = document.getElementById('jsonOut');
+    var html = '';
+    jsonLines.forEach(function(line, i){
+      if(line.pre){
+        html += '<span class="punc">' + line.pre + '</span>\n';
+      } else {
+        var comma = (i < jsonLines.length - 2) ? ',' : '';
+        html += '  <span class="k">"' + line.key + '"</span><span class="punc">: </span><span class="s">' + line.val + '</span><span class="punc">' + comma + '</span>\n';
+      }
+    });
+    out.innerHTML = html;
+  }
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  renderJSON();
+  if(!reduce){
+    var out = document.getElementById('jsonOut');
+    out.style.opacity = '0';
+    requestAnimationFrame(function(){
+      out.style.transition = 'opacity .5s ease';
+      out.style.opacity = '1';
+    });
+  }
+</script>
+
+</body>
+</html>
